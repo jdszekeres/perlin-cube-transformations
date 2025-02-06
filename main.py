@@ -20,24 +20,25 @@ def main():
     new_image = Image.new("RGB", (size[0], size[1]), bg_color)
     pixels = np.array(new_image)
     tot_pixel = size[0] * size[1]
+    image_pixels = np.array(image)  # Convert image to numpy array for faster access
+
     for i in range(size[0]):  # each row
         cur_pixel = i * size[0]
         # print(cur_pixel / tot_pixel * 100, "%")
         for j in range(size[1]):  # Each column
-            pixel = image.getpixel((i, j))
-            val = (pixel[0] + pixel[1] + pixel[2]) / 3
+            pixel = image_pixels[i, j]
+            val = pixel[0]
+
             scale = val / 255 * size[0]  # gets the height of the perlin
             color = 255 - int(i / size[0] * 255)
 
             # Make each row the same color, with each row overlapping on top of each other
-            for b in range(int(scale)):
-                x = size[0] - b - 1
-                y = size[0] - j - 1
-                pixels[x, y] = (
-                    color,
-                    color,
-                    color,
-                )  # Set the entire row to the same color
+            x = size[0] - int(scale) - 1
+            pixels[x:, size[0] - j - 1] = (
+                color,
+                color,
+                color,
+            )  # Set the entire row to the same color
 
         # print(pixel[0], int(scale), color)
     new_image = Image.fromarray(pixels)
